@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Fire Events</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .event {
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .event h3 {
+            margin-top: 0;
+        }
+        .event img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Latest Free Fire Events</h1>
+
+    <!-- Dynamic Event Data Will Be Injected Here -->
+    <div id="events-container">
+        <!-- Event data will be inserted via JavaScript -->
+    </div>
+
+    <script>
+        // Function to fetch event data from Free Fire's website (Simulated here for example)
+        async function fetchEventData() {
+            const response = await fetch('https://ff.garena.com/en'); // Free Fire official site (you can implement scraping)
+            const data = await response.text(); // Fetch HTML content
+
+            // Simulating the event data from the website (since scraping isn't implemented here)
+            const events = [
+                {
+                    name: "New Year Bash",
+                    time: "2025-01-25 18:00 UTC",
+                    image_url: "https://via.placeholder.com/600x400?text=Event+Image+1"
+                },
+                {
+                    name: "Weekend Tournament",
+                    time: "2025-01-28 15:00 UTC",
+                    image_url: "https://via.placeholder.com/600x400?text=Event+Image+2"
+                }
+            ];
+
+            displayEvents(events);
+            sendToTelegram(events); // Send event data to Telegram bot
+        }
+
+        // Function to display events on the page
+        function displayEvents(events) {
+            const container = document.getElementById('events-container');
+            events.forEach(event => {
+                const eventDiv = document.createElement('div');
+                eventDiv.classList.add('event');
+                eventDiv.innerHTML = `
+                    <h3>${event.name}</h3>
+                    <p><strong>Time:</strong> ${event.time}</p>
+                    <img src="${event.image_url}" alt="${event.name}">
+                `;
+                container.appendChild(eventDiv);
+            });
+        }
+
+        // Function to send event data to Telegram Bot
+        async function sendToTelegram(events) {
+            const botToken = '8040537303:AAHcY9d2BOVyNg8OL-KLqvY-slnPPeD2wr0'; // Your Bot API token
+            const chatId = 'YOUR_CHAT_ID'; // Replace with your chat ID
+
+            for (const event of events) {
+                const message = `New Event: ${event.name}\nTime: ${event.time}`;
+                const imageUrl = event.image_url;
+
+                // Send message to Telegram
+                await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                    method: 'POST',
+                    body: new URLSearchParams({
+                        chat_id: chatId,
+                        text: message
+                    })
+                });
+
+                // Send event image to Telegram
+                await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
+                    method: 'POST',
+                    body: new URLSearchParams({
+                        chat_id: chatId,
+                        photo: imageUrl
+                    })
+                });
+            }
+        }
+
+        // Fetch event data when the page loads
+        fetchEventData();
+    </script>
+
+</body>
+</html>
